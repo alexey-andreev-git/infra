@@ -1,0 +1,36 @@
+# locals {
+#   vpc_cidr        = data.aws_vpc.vpc.cidr_block
+#   subnet_cidr     = var.cidr_block
+#   is_valid_subnet = cidrcontains(local.vpc_cidr, local.subnet_cidr)
+# }
+
+# locals {
+#   addresses = {
+#     super_first = cidrhost(data.aws_vpc.vpc.cidr_block, 0)
+#     super_last  = cidrhost(data.aws_vpc.vpc.cidr_block, -1)
+#     sub_first   = cidrhost(var.cidr_block, 0)
+#     sub_last    = cidrhost(var.cidr_block, -1)
+#   }
+#   octets = { for name, address in local.addresses : name => split(".", address) }
+#   int_addresses = {for name, address in local.octets : name =>
+#     address[0] * 256 * 256 * 256 +
+#     address[1] * 256 * 256 +
+#     address[2] * 256 +
+#     address[3]
+#   }
+#   check_valid_subnet = local.int_addresses.sub_first >= local.int_addresses.super_first && local.int_addresses.sub_last <= local.int_addresses.super_last
+#   # vpccidr_def        = try(local.check_valid_subnet, "undefined")
+#   is_valid_subnet    = can(local.check_valid_subnet) ? local.check_valid_subnet : true
+#   # is_valid_subnet    = local.vpccidr_def ? local.check_valid_subnet : true
+#   err_count = !can(local.check_valid_subnet) && local.is_valid_subnet ? 1 : 0
+#   subnet_count = !can(local.check_valid_subnet) && local.is_valid_subnet ? (local.is_valid_subnet ? 1 : 0) : 1
+# }
+
+# Throw an error if the subnet is not valid
+# resource "null_resource" "error" {
+#   # count = !can(local.check_valid_subnet) && local.is_valid_subnet ? 0 : 1
+#   count = local.err_count
+#   provisioner "local-exec" {
+#     command = "echo 'The subnet CIDR ${var.cidr_block} is not part of the VPC CIDR ${data.aws_vpc.vpc.cidr_block}!' && exit 1"
+#   }
+# }

@@ -1,0 +1,123 @@
+# deployments.yaml
+aws:
+  region: "us-east-1"
+  deployments:
+    - id: "deployment-1"
+      vpc: 
+        # id: "vpc-0fa47d3ac5eab2259"
+        cidr_block: "10.0.0.0/16"
+        internet_gateways:
+          1:
+            # id: "igw-0f59d668552060887"
+            tag_name: "internet-gateway-1"
+        subnets:
+          1:
+            # id: "subnet-0f59d668552060887"
+            cidr_block: "10.0.16.0/20"
+            availability_zone: "us-east-1a"
+            availability_zone: "us-east-1a"
+            map_public_ip_on_launch: true
+            tag_name: "subnet-1"
+          2:
+            # id: "subnet-0b3b3b3b3b3b3b3b4"
+            cidr_block: "10.0.32.0/20"
+            availability_zone: "us-east-1b"
+            map_public_ip_on_launch: true
+            tag_name: "subnet-2"
+        security_groups:
+          1:
+            # id: "sg-123456"
+            inbound_rules:
+              - name: "allow-ssh"
+                protocol: "tcp"
+                ports: ["22"]
+                source_ranges: ["0.0.0.0/0"]
+              - name: "allow-http"
+                protocol: "tcp"
+                ports: ["80"]
+                source_ranges: ["0.0.0.0/0"]
+              - name: "allow-https"
+                protocol: "tcp"
+                ports: ["443"]
+                source_ranges: ["0.0.0.0/0"]
+            tag_name: "security-group-1"
+          2:
+            inbound_rules:
+              - name: "allow-ssh"
+                protocol: "tcp"
+                ports: ["22"]
+                source_ranges: ["0.0.0.0/0"]
+            tag_name: "security-group-2"
+        routes:
+          # 1:
+          #   destination_network: 1
+          #   target_gateway: 1
+          2:
+            # id: "rtb-0f59d668552060887"
+            destination_network: 2
+            target_gateway: 1
+            tags_name: "route-table-2"
+        ec2:
+          inst-1:
+            instances_count: 2
+            instance_type: "t2.micro"
+            ami_id: "ubuntu"
+            key_name: "mini-linux"
+            disk_size: 8
+            security_groups: ["1"]
+            subnet: 1
+            associate_public_ip_address: false
+            tag_name: "instance-1"
+          inst-2:
+            instances_count: 2
+            instance_type: "t2.micro"
+            ami_id: "amazon"
+            key_name: "mini-linux"
+            disk_size: 8
+            security_groups: ["2"]
+            subnet: 2
+            associate_public_ip_address: true
+            tag_name: "instance-2"
+
+    - id: "deployment-2"
+      vpc:
+        # id: "vpc-123456"
+        cidr_block: "10.1.0.0/16"
+        internet_gateways:
+          1:
+            # id: "igw-123456"
+            tag_name: "internet-gateway-1"
+        subnets:
+          1:
+            # id: "subnet-123456"
+            cidr_block: "10.1.16.0/20"
+            availability_zone: "us-east-1b"
+            map_public_ip_on_launch: true
+            tag_name: "subnet-1"
+        security_groups:
+          1:
+            # id: "sg-123456"
+            inbound_rules:
+              - name: "allow-ssh"
+                protocol: "tcp"
+                ports: ["22"]
+                source_ranges: ["0.0.0.0/0"]
+            tag_name: "security-group-1"
+        routes:
+          1:
+            # id: "rtb-123456"
+            destination_network: 1
+            target_gateway: 1
+            tags_name: "route-table-1"
+        ec2:
+          inst-1:
+            instances_count: 1
+            instance_type: "t2.micro"
+            ami_id: "ubuntu"
+            # ami_id: "amazon"
+            key_name: "mini-linux"
+            disk_size: 8
+            security_groups: ["1"]
+            subnet: 1
+            associate_public_ip_address: true
+            tag_name: "instance-1"
